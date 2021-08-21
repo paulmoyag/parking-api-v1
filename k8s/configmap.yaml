@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-configmap
+data:
+  XPARC_USERNAME: manager
+  XPARC_PASSWORD: manager
+  XPARC_HOST: https://staging.xparc.eu/
+  XPARC_USER_SERVICE_PATH: SmartParkingWebServiceDemo/v1/users
+  XPARC_TICKET_HOST: https://xparc.eu/restwebdemo/
+  XPARC_REQUEST_TICKET_SERVICE_PATH: /Ticket/requestTicket
+  XPARC_INSTALATION_ID: CBECC415D6F2CEE9

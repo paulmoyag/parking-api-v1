@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: parking-api-deployment
+  labels:
+    app: parking-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: parking-api
+  template:
+    metadata:
+      labels:
+        app: parking-api
+    spec:
+      containers:
+      - name: parking-api
+        image: CHANGEME
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "768Mi"
+            cpu: "768m"
+          limits:
+            memory: "2Gi"
+            cpu: "2Gi"
+        envFrom:
+        - configMapRef:
+            name: app-configmap 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: parking-api-service
+spec:
+  selector:
+    app: parking-api
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
