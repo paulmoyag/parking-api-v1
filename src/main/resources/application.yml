@@ -15,10 +15,14 @@ micronaut:
 
 xparc:
   host: https://staging.xparc.eu/
+  host1: https://xparc.eu
   service:
     path: SmartParkingWebServiceDemo/
+    path1: /restwebdemo/5E2AC0438FE65CEA/
   version: v1/
+  ticket:
+    getPath: Ticket/
+    method: requestTicket/
   user:
     registryPath: users
     getPath: users/
-

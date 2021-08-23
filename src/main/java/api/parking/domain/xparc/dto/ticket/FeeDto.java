@@ -1,9 +1,13 @@
 package api.parking.domain.xparc.dto.ticket;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class FeeDto {
     public String currencyCode;
     public Integer fractionDigits;
-    public Double Value;
+    public Double value;
+    @JsonProperty("Value")
+    public Double ValueTicket;
 
     public String getCurrencyCode() {
         return currencyCode;
@@ -22,10 +26,14 @@ public class FeeDto {
     }
 
     public Double getValue() {
-        return Value;
+        return value;
     }
 
-    public void setValue(Double Value) {
-        this.Value = Value;
+    public void setValue(Double value) {
+        this.value = value;
     }
+
+    public Double getValueTicket() { return ValueTicket; }
+
+    public void setValueTicket(Double valueTicket) { ValueTicket = valueTicket; }
 }

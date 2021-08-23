@@ -8,6 +8,8 @@ import api.parking.adapter.in.dto.XparcUpdatePostPaymentRequestDto;
 import api.parking.adapter.in.dto.XparcUpdatePostPaymentResponseDto;
 import api.parking.adapter.in.dto.DeletePlatesXparcRequestDto;
 import api.parking.adapter.in.dto.DeletePlatesXparcResponseDto;
+import api.parking.adapter.in.dto.XparcUserGetTotalDebtRequestDto;
+import api.parking.adapter.in.dto.XparcUserGetOutstandingFeeResponseDto;
 import api.parking.application.exception.AddXparcPlateUserException;
 import api.parking.application.exception.AddXparcUserException;
 import api.parking.application.exception.DeleteXparcPlatesException;
@@ -21,5 +23,5 @@ public interface XparcUserInterface {
     AddPlateXparcUserResponseDto xparcUserPlateRegistry(AddPlateXparcUserRequestDto userRequestDto) throws GetXparcUserException, AddXparcPlateUserException;
     XparcUpdatePostPaymentResponseDto xparcUserPostPaymentUpdateRegistry(XparcUpdatePostPaymentRequestDto userRequestDto) throws GetXparcUserException, UpdateXparcPostPaymentUserException;
     DeletePlatesXparcResponseDto xparcDeletePlates(DeletePlatesXparcRequestDto deletePlatesXparcRequestDto) throws DeleteXparcPlatesException, GetXparcUserException;
-
+    XparcUserGetOutstandingFeeResponseDto xparcUserGetOutstandingFee(XparcUserGetTotalDebtRequestDto userRequestDto) throws GetXparcUserException;
 }

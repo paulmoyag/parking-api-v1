@@ -1,6 +1,8 @@
 package api.parking.application.usecase.activeDebt;
 
 
+import api.parking.adapter.in.dto.XparcRequestTicketRequestDto;
+import api.parking.adapter.in.dto.XparcRequestTicketResponseDto;
 import api.parking.adapter.in.dto.activeDebt.GetActiveDebtResponseDto;
 import api.parking.application.exception.AddXparcTicketException;
 import api.parking.application.interfaces.out.XparcTicketPort;
@@ -18,5 +20,9 @@ public class GetUserActiveDebtUsecase {
 
     public GetActiveDebtResponseDto getActiveDebt(List<String> numberplates) throws AddXparcTicketException {
         return xparcTicketPort.xparcGetActiveDebt(numberplates);
+    }
+
+    public XparcRequestTicketResponseDto xparcRequestTicket(XparcRequestTicketRequestDto requestDto) throws AddXparcTicketException{
+        return xparcTicketPort.xparcRequestTicket(requestDto);
     }
 }

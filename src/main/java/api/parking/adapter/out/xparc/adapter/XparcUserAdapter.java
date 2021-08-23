@@ -9,6 +9,8 @@ import api.parking.adapter.in.dto.DeletePlatesXparcRequestDto;
 import api.parking.adapter.in.dto.DeletePlatesXparcResponseDto;
 import api.parking.adapter.in.dto.XparcUpdatePostPaymentRequestDto;
 import api.parking.adapter.in.dto.XparcUpdatePostPaymentResponseDto;
+import api.parking.adapter.in.dto.XparcUserGetTotalDebtRequestDto;
+import api.parking.adapter.in.dto.XparcUserGetOutstandingFeeResponseDto;
 import api.parking.application.exception.AddXparcPlateUserException;
 import api.parking.application.exception.AddXparcUserException;
 import api.parking.application.exception.DeleteXparcPlatesException;
@@ -19,6 +21,7 @@ import api.parking.application.interfaces.out.XparcUserPort;
 import api.parking.domain.xparc.dto.NumberPlates;
 import api.parking.domain.xparc.dto.UserRetrieveInformationDto;
 import api.parking.domain.xparc.dto.XparcUserRegistryDto;
+import io.micronaut.context.annotation.Value;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
@@ -38,9 +41,13 @@ import java.util.stream.Collectors;
 public class XparcUserAdapter implements XparcUserPort {
 
     private final AbstractXparcUserMapper userMapper;
+    @Value("${xparc.host}")
     public String XPARC_HOST = System.getenv("XPARC_HOST");
+    @Value("${xparc.service.path}" + "${xparc.version}"+"${xparc.user.getPath}")
     public String XPARC_USER_SERVICE_PATH = System.getenv("XPARC_USER_SERVICE_PATH");
+    @Value("${xparc.username}")
     public String XPARC_USERNAME = System.getenv("XPARC_USERNAME");
+    @Value("${xparc.password}")
     public String XPARC_PASSWORD = System.getenv("XPARC_PASSWORD");
 
     public XparcUserAdapter(AbstractXparcUserMapper userMapper) {
@@ -159,5 +166,22 @@ public class XparcUserAdapter implements XparcUserPort {
                 .path("/")
                 .path(userId)
                 .build();
+    }
+
+    @Override
+    public XparcUserGetOutstandingFeeResponseDto xparcUserGetOutstandingFee(XparcUserGetTotalDebtRequestDto requestDto) throws GetXparcUserException {
+        URI uri = getUri(requestDto.getUserId()+"/outstandingfee");
+        HttpRequest<?> req = HttpRequest.GET(uri)
+                .basicAuth(XPARC_USERNAME, XPARC_PASSWORD);
+
+        HttpClient httpClient = new DefaultHttpClient();
+        Flowable<XparcUserGetOutstandingFeeResponseDto> flowable = Flowable.fromPublisher(
+                httpClient.retrieve(req, Argument.of(XparcUserGetOutstandingFeeResponseDto.class)));
+
+        try {
+            return flowable.blockingFirst();
+        } catch (HttpClientResponseException e) {
+            throw new GetXparcUserException(e.getResponse().getStatus(), e.getMessage());
+        }
     }
 }

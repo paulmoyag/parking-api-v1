@@ -1,9 +1,13 @@
 package api.parking.adapter.out.xparc.adapter;
 
 
+import api.parking.adapter.in.dto.XparcRequestTicketRequestDto;
+import api.parking.adapter.in.dto.XparcRequestTicketResponseDto;
 import api.parking.adapter.in.dto.activeDebt.GetActiveDebtResponseDto;
+import api.parking.application.exception.AddXparcTicketException;
 import api.parking.application.interfaces.out.XparcTicketPort;
 import api.parking.domain.xparc.dto.ticket.ActiveDebtResDto;
+import io.micronaut.context.annotation.Value;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
@@ -24,10 +28,17 @@ public class XparcTicketAdapter implements XparcTicketPort {
 
     public String XPARC_TICKET_HOST = System.getenv("XPARC_TICKET_HOST");
     public String XPARC_INSTALATION_ID = System.getenv("XPARC_INSTALATION_ID");
+	@Value("${xparc.host1}")
+    public String XPARC_TICKET_HOST2 = System.getenv("XPARC_TICKET_HOST");
     public String XPARC_REQUEST_TICKET_SERVICE_PATH = System.getenv("XPARC_REQUEST_TICKET_SERVICE_PATH");
+    @Value("${xparc.service.path1}" + "${xparc.ticket.getPath}"+"${xparc.ticket.method}")
+    public String XPARC_REQUEST_TICKET_SERVICE_PATH2 = System.getenv("XPARC_REQUEST_TICKET_SERVICE_PATH2");
+    @Value("${xparc.username}")
     public String XPARC_USERNAME = System.getenv("XPARC_USERNAME");
+    @Value("${xparc.password}")
     public String XPARC_PASSWORD = System.getenv("XPARC_PASSWORD");
     private Double totalActiveDebtValue;
+    private Double totalDebtValue;
 
     public GetActiveDebtResponseDto xparcGetActiveDebt(List<String> numberplates) {
         GetActiveDebtResponseDto activeDebtResponseDto = new GetActiveDebtResponseDto();
@@ -58,5 +69,33 @@ public class XparcTicketAdapter implements XparcTicketPort {
             activeDebtResponseDto.setHasActiveDebt(true);
         }
         return activeDebtResponseDto;
+    }
+    
+    @Override
+    public XparcRequestTicketResponseDto xparcRequestTicket(XparcRequestTicketRequestDto requestDto) throws AddXparcTicketException {
+        totalDebtValue = 0.0;
+        XparcRequestTicketResponseDto resDto = null;
+
+        URI uri = UriBuilder.of(XPARC_TICKET_HOST2)
+                    .path(XPARC_REQUEST_TICKET_SERVICE_PATH2)
+                    .queryParam("ticketnumber", requestDto.getTicketnumber() != null ? requestDto.getTicketnumber() : "")
+                    .queryParam("externalcardnumber", requestDto.getExternalcardnumber() != null ? requestDto.getExternalcardnumber(): "")
+                    .queryParam("numberplate", requestDto.getNumberplate()!= null ?requestDto.getNumberplate(): "")
+                    .queryParam("barcode", requestDto.getBarcode()!= null ? requestDto.getNumberplate(): "")
+                    .queryParam("qrtext", requestDto.getQrtext()!= null ?requestDto.getNumberplate(): "")
+                    .build();
+
+        HttpRequest<?> req = HttpRequest.GET(uri)
+                .basicAuth(XPARC_USERNAME, XPARC_PASSWORD);
+
+        HttpClient httpClient = new DefaultHttpClient();
+        Flowable<XparcRequestTicketResponseDto> flowable = Flowable.fromPublisher(
+                httpClient.retrieve(req, Argument.of(XparcRequestTicketResponseDto.class)));
+        try {
+            resDto = flowable.blockingFirst();
+            totalDebtValue += resDto.getFee().getValueTicket();
+        } catch (HttpClientResponseException e) {
+        }
+        return resDto;
     }
 }

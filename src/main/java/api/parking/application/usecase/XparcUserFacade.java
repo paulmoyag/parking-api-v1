@@ -10,6 +10,8 @@ import api.parking.adapter.in.dto.DeletePlatesXparcResponseDto;
 import api.parking.adapter.in.dto.XparcUpdatePostPaymentRequestDto;
 import api.parking.adapter.in.dto.XparcUpdatePostPaymentResponseDto;
 
+import api.parking.adapter.in.dto.XparcUserGetTotalDebtRequestDto;
+import api.parking.adapter.in.dto.XparcUserGetOutstandingFeeResponseDto;
 import api.parking.application.exception.AddXparcPlateUserException;
 import api.parking.application.exception.AddXparcUserException;
 import api.parking.application.exception.DeleteXparcPlatesException;
@@ -25,12 +27,14 @@ public class XparcUserFacade implements XparcUserInterface {
     private final XparcUserPlateUpdateUsecase xparcUserUpdateUsecase;
     private final XparcUserPostPaymentUpdateUsecase xparcUserPostPaymentUpdateUsecase;
     private final XparcDeletePlatesUsecase xparcDeletePlatesUsecase;
+    private final XparcUserGetOutstandingFeeUsecase xparcUserGetOutstandingFeeUsecase;
 
-    public XparcUserFacade(XparcUserRegistryUsecase xparcUserRegistryUsecase, XparcUserPlateUpdateUsecase xparcUserUpdateUsecase, XparcUserPostPaymentUpdateUsecase xparcUserPostPaymentUpdateUsecase, XparcDeletePlatesUsecase xparcDeletePlatesUsecase) {
+    public XparcUserFacade(XparcUserRegistryUsecase xparcUserRegistryUsecase, XparcUserPlateUpdateUsecase xparcUserUpdateUsecase, XparcUserPostPaymentUpdateUsecase xparcUserPostPaymentUpdateUsecase, XparcDeletePlatesUsecase xparcDeletePlatesUsecase, XparcUserGetOutstandingFeeUsecase xparcUserGetOutstandingFeeUsecase) {
         this.xparcUserRegistryUsecase = xparcUserRegistryUsecase;
         this.xparcUserUpdateUsecase = xparcUserUpdateUsecase;
         this.xparcUserPostPaymentUpdateUsecase = xparcUserPostPaymentUpdateUsecase;
         this.xparcDeletePlatesUsecase = xparcDeletePlatesUsecase;
+        this.xparcUserGetOutstandingFeeUsecase = xparcUserGetOutstandingFeeUsecase;
     }
 
     public AddXparcUserResponseDto xparcUserRegistry(AddXparcUserRequestDto userRequestDto) throws AddXparcUserException {
@@ -45,5 +49,9 @@ public class XparcUserFacade implements XparcUserInterface {
 
     public DeletePlatesXparcResponseDto xparcDeletePlates(DeletePlatesXparcRequestDto deletePlateXparcRequestDto) throws DeleteXparcPlatesException, GetXparcUserException {
         return xparcDeletePlatesUsecase.xparcDeletePlates(deletePlateXparcRequestDto);
+    }
+
+    public XparcUserGetOutstandingFeeResponseDto xparcUserGetOutstandingFee(XparcUserGetTotalDebtRequestDto userRequestDto) throws GetXparcUserException {
+        return xparcUserGetOutstandingFeeUsecase.xparcUserGetOutstandingFee(userRequestDto);
     }
 }
