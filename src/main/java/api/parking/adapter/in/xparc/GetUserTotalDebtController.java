@@ -41,7 +41,7 @@ public class GetUserTotalDebtController {
             content = @Content(mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = XparcUpdatePostPaymentResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "Bad Request")
-    public HttpResponse<XparcUserGetTotalDebtResponseDto> XparcUserGetOutstandingFee(@Body XparcUserGetTotalDebtRequestDto userRequestDto) {
+    public HttpResponse<XparcUserGetTotalDebtResponseDto> XparcUserGetTotalDebt(@Body XparcUserGetTotalDebtRequestDto userRequestDto) {
         try {
             double totalDebt = 0.0;
             FeeDto fee = new FeeDto();
@@ -64,7 +64,7 @@ public class GetUserTotalDebtController {
             return HttpResponse.ok(userTotalDebtResponseDto);
         }
         catch (GetXparcUserException | AddXparcTicketException e){
-            return HttpResponse.status(HttpStatus.BAD_REQUEST, e.getMessage());
+            return HttpResponse.status(HttpStatus.FORBIDDEN, e.getMessage());
         }
     }
 }
